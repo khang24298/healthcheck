@@ -11,17 +11,9 @@ class IPAddress extends Model{
     protected $table ="ipaddresses";
 
     protected $fillable = [
-        'name', 'email',
+        'ip', 'port','attempts','first_check','final_check','status'
     ];
 
-    /**
-     * The attributes excluded from the model's JSON form.
-     *
-     * @var array
-     */
-    protected $hidden = [
-        'password',
-    ];
 }
 
 ?>

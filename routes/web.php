@@ -15,9 +15,10 @@ $router->get('/', function () use ($router) {
     return $router->app->version();
 });
 $router->group(['prefix' => 'api'], function () use ($router) {
-    $router->get('/ip','ExampleController@index');
+    $router->get('/all','ExampleController@index');
+    $router->get('/check-ip-manual','ExampleController@checkIP');
     $router->get('/ip-success','IPController@getIPSuccess');
     $router->get('/ip-fail','IPController@getIPFail');
-    $router->get('/ip-info/{id}','IPController@getIPInfo');
-    $router->post('ip-address','IPController@insertIP');
+    $router->get('/ip-info/{ip}','IPController@getIPInfo');
+    $router->post('/add-ip','IPController@insertIP');
 });

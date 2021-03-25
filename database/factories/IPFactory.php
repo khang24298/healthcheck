@@ -18,10 +18,7 @@ use Faker\Generator as Faker;
 
 $factory->define(IPAddress::class, function (Faker $faker) {
     return [
-        'ip' => rand(0,223).".".rand(0,255).".".rand(0,255).".".rand(0,255),
-        'port' => rand(0,65535),
-        'first_check' => $faker->dateTime(),
-        'final_check' => $faker->dateTime(),
-        'attempts' => rand(0,10)
+        'ip' => rand(1,223).".".rand(0,255).".".rand(0,255).".".rand(0,255),
+        'port' => rand(0,65353),
     ];
 });

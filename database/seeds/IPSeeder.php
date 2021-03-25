@@ -12,6 +12,6 @@ class IPSeeder extends Seeder
      */
     public function run()
     {
-        factory(IPAddress::class,100)->create();
+        factory(IPAddress::class,1000)->create();
     }
 }

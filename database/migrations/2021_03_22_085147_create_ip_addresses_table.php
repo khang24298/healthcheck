@@ -20,7 +20,7 @@ class CreateIpAddressesTable extends Migration
             $table->boolean('status')->default(false);
             $table->string('first_check')->nullable();
             $table->string('final_check')->nullable();
-            $table->integer('attempts')->nullable();
+            $table->integer('attempts')->default(0);
             $table->timestamps();
         });
     }

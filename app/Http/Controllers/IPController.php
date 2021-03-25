@@ -6,7 +6,7 @@ use App\Http\Controllers\Model\IPAddress;
 use App\Jobs\CheckHealthJob;
 use Exception;
 use Illuminate\Http\Request;
-use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Cache;
 
 class IPController extends Controller
 {
@@ -21,54 +21,101 @@ class IPController extends Controller
     }
 
     public function index(){
-        // return Cache::remember('all_ip',300, function(){
-        //     return IPAddress::all();
-        // });
-        return IPAddress::where('status',0)->get();
-    }
-    public function getIPSuccess(){
-        $results = $this->index();
-        foreach($results as $item){
-            // CheckHealthJob::dispatch($item)
-            dispatch(new CheckHealthJob($item));
+        try{
+            $results = Cache::remember('all_ip',300, function(){
+                return IPAddress::all();
+            });
+            $mess = "success";
+            $code = 200;
         }
-        
-    }
-    public function isAliveIP(IPAddress $ip){
-        if($ip->port){ 
-            $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
-            try{
-                $result = socket_connect($socket, $ip->ip, $ip->port);
-            }
-            catch(Exception $e){
-                // Log::info($e->getMessage());
-                $result = false;
-            }
+        catch(Exception $e){
+            $mess = $e->getMessage();
+            $code = 500;
         }
-        else{
-            exec("ping -c 1 -W 1 ".$ip->ip, $output);
-            if(count($output) == 6){
-                $result = true;
-            }
-            else{
-                $result = false;
-            }
-
-        }
-       
-        return $result;
+        return response()->json([
+            'message' => $mess,
+            'data' => $results
+        ],$code);
     }
-    public function getIPFail(){
-
+    public function checkIP(){
+        $results = Cache::remember('all_ip',300, function(){
+            return IPAddress::where('status',0)->get();
+        });
+        foreach($results as $item)
+        {
+            if($item->status == 0){
+                dispatch(new CheckHealthJob($item));
+            }
+        };
+        return "Checking IP is in process";
     }
     
-    public function getIPInfo($id){
-
+    public function getIPSuccess(){
+        try{
+            $results = Cache::remember('success_ip',300,function(){
+                return IPAddress::where('status',1)->get();
+            });
+            $mess = "success";
+        }
+        catch(Exception $e){
+            $mess = $e->getMessage();
+            $code = 500;
+        }
+        return response()->json([
+            'message' => $mess,
+            'data' => $results
+        ],$code);
+    }
+    public function getIPFail(){
+        try{
+            $results = Cache::remember('success_ip',300,function(){
+                return IPAddress::where('status',0)->get();
+            });
+            $mess = "success";
+        }
+        catch(Exception $e){
+            $mess = $e->getMessage();
+            $code = 500;
+        }
+        return response()->json([
+            'message' => $mess,
+            'data' => $results
+        ],$code);
+    }
+    
+    public function getIPInfo($ip){
+        try{
+            $results = Cache::remember('ip:'.$ip,300,function() use ($ip){
+                return IPAddress::where('ip',$ip)->get();
+            });
+            $mess = "success";
+        }
+        catch(Exception $e){
+            $mess = $e->getMessage();
+            $code = 500;
+        }
+        return response()->json([
+            'message' => $mess,
+            'data' => $results
+        ],$code);
     }
 
     public function insertIP(Request $request){
-        $ip = IPAddress::create($request->all());
-        dispatch(new CheckHealthJob($ip));
-        return;
+        try{
+            $ip = new IPAddress();
+            $ip->ip = $request->ip;
+            $ip->port = $request->port;
+            $ip->save();
+            dispatch(new CheckHealthJob($ip));
+            $mess = "success";
+        }
+        catch(Exception $e){
+            $mess = $e->getMessage();
+            $code = 500;
+        }
+        return response()->json([
+            'message' => $mess,
+            'data' => $ip
+        ],$code);
     }
 }

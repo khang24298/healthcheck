@@ -1,24 +1,44 @@
-# Lumen PHP Framework
+#IP SERVER, PORT CHECKING MODULE#
 
-[![Build Status](https://travis-ci.org/laravel/lumen-framework.svg)](https://travis-ci.org/laravel/lumen-framework)
-[![Total Downloads](https://poser.pugx.org/laravel/lumen-framework/d/total.svg)](https://packagist.org/packages/laravel/lumen-framework)
-[![Latest Stable Version](https://poser.pugx.org/laravel/lumen-framework/v/stable.svg)](https://packagist.org/packages/laravel/lumen-framework)
-[![License](https://poser.pugx.org/laravel/lumen-framework/license.svg)](https://packagist.org/packages/laravel/lumen-framework)
+I. **Mô tả tính năng**
+    
+1. Thêm IP info cần kiểm tra:
+    Thông qua HTTP POST <yourhost>/api/add-ip
+    - Request data:
+    {
+        'ip': ip address //ex: 127.0.0.1  -> required
+        'port': ip port //ex: 0->65353    -> optional
+    }
+    - Response trả về ip đã thêm nếu thành công hoặc thông báo lỗi nếu thất bại
 
-Laravel Lumen is a stunningly fast PHP micro-framework for building web applications with expressive, elegant syntax. We believe development must be an enjoyable, creative experience to be truly fulfilling. Lumen attempts to take the pain out of development by easing common tasks used in the majority of web projects, such as routing, database abstraction, queueing, and caching.
+2. Kiểm tra thông tin ip:
+   Thêm IP info cần kiểm tra thông qua: 
+   HTTP GET <yourhost>/api/ip-info/<check-ip>
+    
+3. Chạy tính năng kiểm tra IP trong background:
+    Truy cập HTTP GET <yourhost>/api/check-ip-manual
 
-## Official Documentation
+4. Lấy kết quả Server IP:
+    - Lấy IP Server sống: HTTP GET <yourhost>/api/ip-success
+    - Lấy IP Server chết: HTTP GET <yourhost>/api/ip-fail
+    - Lấy tất cả IP Server : HTTP GET <yourhost>/api/all
 
-Documentation for the framework can be found on the [Lumen website](https://lumen.laravel.com/docs).
+5. Cronjob tự động kiểm tra IP mỗi 5 phút.
 
-## Contributing
+II.  **Các service cần thiết**
 
-Thank you for considering contributing to Lumen! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Lumen, please send an e-mail to Taylor Otwell at taylor@laravel.com. All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Lumen framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+1. Redis:
+    Cài đặt và cấu hình theo docs: https://laravel.com/docs/7.x/cache
+2. Cronjob:
+    Trong thư mục root của ứng dụng:
+    - Chạy crontab -e để tạo cronjob
+    - Thêm nội dung:
+    "5 * * * * cd /your-project-path && php artisan cronip:update >> /dev/null 2>&1"
+3.  Supervisor:
+    Cài đặt và cấu hình theo docs: https://laravel.com/docs/7.x/cache
+4. Khởi chạy ứng dụng:
+    4.1 composer install
+    4.2 php artisan migrate --seed
+    4.3 Cấp quyền execute "chmod +x /yourfiles.sh"
+    và chạy 2 file cấu hình "/yourfiles.sh"
+    
