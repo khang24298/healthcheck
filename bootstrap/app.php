@@ -22,6 +22,8 @@ date_default_timezone_set(env('APP_TIMEZONE', 'UTC'));
 $app = new Laravel\Lumen\Application(
     dirname(__DIR__)
 );
+$app->instance('path.config', app()->basePath() . DIRECTORY_SEPARATOR . 'config');
+$app->instance('path.storage', app()->basePath() . DIRECTORY_SEPARATOR . 'storage');
 
 $app->withFacades();
 
@@ -48,6 +50,9 @@ $app->singleton(
     App\Console\Kernel::class
 );
 
+$app->singleton(\Illuminate\Contracts\Routing\ResponseFactory::class, function() {
+    return new \Laravel\Lumen\Http\ResponseFactory();
+});
 /*
 |--------------------------------------------------------------------------
 | Register Config Files

@@ -42,3 +42,4 @@ II.  **Các service cần thiết**
     4.3 Cấp quyền execute "chmod +x /yourfiles.sh"
     và chạy 2 file cấu hình "/yourfiles.sh"
     
+    *File cấu hình supervisor trong folder supervisor

@@ -24,6 +24,7 @@ class IPController extends Controller
         try{
             $results = Cache::remember('all_ip',300, function(){
                 return IPAddress::all();
+                ;
             });
             $mess = "success";
             $code = 200;
@@ -32,20 +33,18 @@ class IPController extends Controller
             $mess = $e->getMessage();
             $code = 500;
         }
-        return response()->json([
-            'message' => $mess,
-            'data' => $results
-        ],$code);
+        // dd($results);
+        return view('home',['data'=>$results]);
     }
+
+
     public function checkIP(){
         $results = Cache::remember('all_ip',300, function(){
             return IPAddress::where('status',0)->get();
         });
         foreach($results as $item)
         {
-            if($item->status == 0){
-                dispatch(new CheckHealthJob($item));
-            }
+            dispatch(new CheckHealthJob($item));
         };
         return "Checking IP is in process";
     }
@@ -101,6 +100,7 @@ class IPController extends Controller
     }
 
     public function insertIP(Request $request){
+        // dd($request);
         try{
             $ip = new IPAddress();
             $ip->ip = $request->ip;
@@ -108,6 +108,7 @@ class IPController extends Controller
             $ip->save();
             dispatch(new CheckHealthJob($ip));
             $mess = "success";
+            $code = 200;
         }
         catch(Exception $e){
             $mess = $e->getMessage();

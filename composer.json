@@ -6,6 +6,8 @@
     "type": "project",
     "require": {
         "php": "^7.2.5",
+        "botble/assets": "^1.0",
+        "doctrine/dbal": "^2.10",
         "illuminate/redis": "^7.30",
         "laravel/lumen-framework": "^7.0",
         "predis/predis": "^1.1"

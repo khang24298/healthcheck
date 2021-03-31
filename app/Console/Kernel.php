@@ -13,7 +13,8 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        Commands\CronIP::class
+        Commands\CronIP::class,
+        Commands\DoubleCheckIP::class
     ];
 
     /**
@@ -25,5 +26,6 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         $schedule->command('cronip:update')->everyFiveMinutes();
+        $schedule->command('cronip:doublecheck')->everyMinute();
     }
 }

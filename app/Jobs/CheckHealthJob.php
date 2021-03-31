@@ -6,6 +6,7 @@ namespace App\Jobs;
 use App\Http\Controllers\Model\IPAddress;
 use Exception;
 use Illuminate\Support\Facades\Log;
+use Throwable;
 class CheckHealthJob extends Job
 {
     /**
@@ -14,11 +15,11 @@ class CheckHealthJob extends Job
      * @return void
      */
     protected $ip;
-
     public function __construct(IPAddress $ip)
     {
         $this->ip = $ip;
-
+        $this->ip->isChecking = true;
+        $this->ip->save();
     }
     
     /**
@@ -29,6 +30,21 @@ class CheckHealthJob extends Job
     public function handle()
     {
         $this->firstCheckIP($this->ip);
+ 
+    }
+
+    // If failed jobs
+    public function failed(Throwable $exception)
+    {
+        //Get execution time
+        $cur = shell_exec('date +"%d/%m/%y, %T"');
+   
+        //Update value for ip
+        ($this->ip->attempts == 0) ? $this->ip->first_check = $cur : '';
+        $this->ip->attempts += 1;
+        $this->ip->final_check = $cur;
+        $this->ip->isChecking = false;
+        $this->ip->save();
     }
 
     
@@ -37,9 +53,6 @@ class CheckHealthJob extends Job
         if($this->isAliveIP($ip) == true){
             $ip->status = true;
         }
-        else{
-            dispatch(new DoubleCheckIPJob($ip))->onQueue('processing');
-        }
         //Get execution time
         $cur = shell_exec('date +"%d/%m/%y, %T"');
    
@@ -47,14 +60,16 @@ class CheckHealthJob extends Job
         ($ip->attempts == 0) ? $ip->first_check = $cur : '';
         $ip->attempts += 1;
         $ip->final_check = $cur;
+        $ip->isChecking = false;
         $ip->save();
     }
 
     //Check if IP alive or not 
     public function isAliveIP(IPAddress $ip){
         if($ip->port){ 
-            $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
+            
             try{
+                $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
                 $result = socket_connect($socket, $ip->ip, $ip->port);
             }
             catch(Exception $e){

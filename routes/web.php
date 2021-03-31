@@ -11,14 +11,23 @@
 |
 */
 
-$router->get('/', function () use ($router) {
-    return $router->app->version();
+$router->get('/','IPController@index');
+
+$router->get('/upload', function (){
+    return view('upload');
 });
+$router->get('/supervisors','SupervisorController@index');
 $router->group(['prefix' => 'api'], function () use ($router) {
-    $router->get('/all','ExampleController@index');
-    $router->get('/check-ip-manual','ExampleController@checkIP');
+    // IPController
+    $router->get('/check-ip-manual','IPController@checkIP');
     $router->get('/ip-success','IPController@getIPSuccess');
     $router->get('/ip-fail','IPController@getIPFail');
     $router->get('/ip-info/{ip}','IPController@getIPInfo');
     $router->post('/add-ip','IPController@insertIP');
+    // SupervisorController
+    $router->get('/supervisor/{id}','SupervisorController@runSupervisor');
+    $router->post('/supervisor','SupervisorController@store');
+    $router->put('/supervisor/{id}','SupervisorController@update');
+    $router->delete('/supervisor/{id}','SupervisorController@delete');
+
 });
