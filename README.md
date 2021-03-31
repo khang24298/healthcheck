@@ -43,3 +43,11 @@ II.  **Các service cần thiết**
     và chạy 2 file cấu hình "/yourfiles.sh"
     
     *File cấu hình supervisor trong folder supervisor
+
+
+----
+Update 31/03/2021
+1. Thiết kế giao diện show kết quả, upload và supervisor
+2. Có thể chỉnh sửa supervisor config
+3. Thêm cronjob cho double check 
+"5 * * * * cd /your-project-path && php artisan cronip:update >> /dev/null 2>&1"
