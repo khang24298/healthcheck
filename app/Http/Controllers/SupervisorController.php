@@ -29,7 +29,8 @@ class SupervisorController extends Controller
     }
 
     public function show($id){
-         
+        $sup = Supervisor::findOrFail($id);
+        return view('supervisor-edit',['data'=>$sup]);
     }
 
     public function store(Request $request){
@@ -61,37 +62,24 @@ class SupervisorController extends Controller
         return 1;
     }
     public function update(Request $request){
+        // dd($request);
         try{
             $sup = Supervisor::find($request['id']);
             $sup->program_name = $request['program_name'];
-            $sup->autostart = $request['autostart'];
-            $sup->autorestart = $request['autorestart'];
-            $sup->user = $request['user'];
-            $sup->redirect_stderr= $request['redirect_stderr'];
-            $sup->stopwaitsecs = $request['stopwaitsecs'];
-            $sup->numprocs = $request['numprocs'];
-            $sup->sleep = $request['sleep'];
-            $sup->file_exec = $request['file_exec'];
-            $sup->tries = $request['tries'];
-            $sup->queue = $request['queue'];
-            $sup->timeout = $request['timeout'];
+            $sup->autostart = ($request['auto_start'] == "on") ? true : false;
+            $sup->autorestart = ($request['auto_restart'] == "on") ? true : false;
+            ($request['stopwaitsecs'] != "") ? $sup->stopwaitsecs = $request['stopwaitsecs'] : ""; 
+            ($request['num_procs'] != "") ? $sup->numprocs = $request['num_procs'] : "";
+            ($request['sleep'] != "") ? $sup->sleep = $request['sleep'] : "";
+            $sup->file_exec = "supervisor/exec/".$sup->program_name.".sh";
+            ($request['tries'] != "") ? $sup->tries = $request['tries'] : "";
+            ($request['queue'] != "") ? $sup->queue = $request['queue'] : "";
+            ($request['timeout'] != "") ? $sup->timeout = $request['timeout'] : "";
             $sup->save();
-            $content_conf = $this->monitorTemplate($sup);
-            $conf = fopen("/supervisor/conf.d/laravel-worker.conf", "w") or die("Unable to open file!");
-            fwrite($conf, $content_conf);
-            fclose($conf);
-            // Execute file modification
-            $content_exec = $this->execFile($sup);
-            $exec_file = fopen($sup->file_exec, "w") or die("Unable to open file!");
-            fwrite($exec_file, $content_exec);
-            fclose($exec_file);
-            // Update supervisor and run file
-            shell_exec('sudo supervisorctl reread');
-            shell_exec('sudo supevisorctl update');
-            shell_exec($sup->file_exec);
+            return $sup;
         }
         catch(\Throwable $th){
-
+            return $th->getMessage();
         }
          
     }

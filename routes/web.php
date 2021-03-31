@@ -26,8 +26,9 @@ $router->group(['prefix' => 'api'], function () use ($router) {
     $router->post('/add-ip','IPController@insertIP');
     // SupervisorController
     $router->get('/supervisor/{id}','SupervisorController@runSupervisor');
+    $router->get('/supervisor-edit/{id}','SupervisorController@show');
     $router->post('/supervisor','SupervisorController@store');
-    $router->put('/supervisor/{id}','SupervisorController@update');
+    $router->post('/supervisor-edit','SupervisorController@update');
     $router->delete('/supervisor/{id}','SupervisorController@delete');
 
 });
