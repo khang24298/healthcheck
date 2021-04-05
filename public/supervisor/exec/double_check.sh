@@ -1,2 +1,2 @@
-#!/bin/bash
-php /Users/mac/Sites/healthcheck/artisan  --queue=processing queue:listen
+#!/bin/sh
+php /Users/mac/Sites/healthcheck/artisan --queue=default --delay=3 queue:listen

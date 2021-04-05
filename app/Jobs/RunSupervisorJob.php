@@ -25,8 +25,8 @@ class RunSupervisorJob extends Job
      */
     public function handle()
     {
+        shell_exec('php /Users/mac/Sites/healthcheck/artisan --queue=high queue:listen');
         $this->runSupervisor($this->sup);
- 
     }
 
     public function monitorTemplate(Supervisor $sup)
@@ -81,7 +81,7 @@ class RunSupervisorJob extends Job
             shell_exec('supervisorctl reread');
             shell_exec('supervisorctl update');
             shell_exec('chmod +x '.$sup->file_exec);
-            shell_exec("./".$sup->file_exec);
+            shell_exec("supervisorctl start all");
         }
         catch(\Throwable $th){
             Log::info($th->getMessage());

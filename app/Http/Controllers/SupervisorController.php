@@ -44,13 +44,13 @@ class SupervisorController extends Controller
             ($request['stopwaitsecs'] != "") ? $sup->stopwaitsecs = $request['stopwaitsecs'] : ""; 
             ($request['num_procs'] != "") ? $sup->numprocs = $request['num_procs'] : "";
             ($request['sleep'] != "") ? $sup->sleep = $request['sleep'] : "";
-            $sup->file_exec = "supervisor/exec/".$sup->program_name.".sh";
+            $sup->file_exec = "/Users/mac/Sites/healthcheck/supervisor/exec/".$sup->program_name.".sh";
             ($request['tries'] != "") ? $sup->tries = $request['tries'] : "";
             ($request['queue'] != "") ? $sup->queue = $request['queue'] : "";
             ($request['timeout'] != "") ? $sup->timeout = $request['timeout'] : "";
 
             $sup->save();
-            return redirect()->back();  
+            return "Đã save thành công";
         } catch (\Throwable $th) {
             Log::info($th->getMessage());
         }
@@ -58,8 +58,9 @@ class SupervisorController extends Controller
 
     public function runSupervisor($id){
         $sup = Supervisor::findOrFail($id);
-        dispatch(new RunSupervisorJob($sup));
-        return 1;
+        dispatch(new RunSupervisorJob($sup))->onQueue('high');
+        return "Supervisor is running!
+        Checking your IP results after it finishes!";
     }
     public function update(Request $request){
         // dd($request);
@@ -71,7 +72,7 @@ class SupervisorController extends Controller
             ($request['stopwaitsecs'] != "") ? $sup->stopwaitsecs = $request['stopwaitsecs'] : ""; 
             ($request['num_procs'] != "") ? $sup->numprocs = $request['num_procs'] : "";
             ($request['sleep'] != "") ? $sup->sleep = $request['sleep'] : "";
-            $sup->file_exec = "supervisor/exec/".$sup->program_name.".sh";
+            $sup->file_exec = "/Users/mac/Sites/healthcheck/supervisor/exec/".$sup->program_name.".sh";
             ($request['tries'] != "") ? $sup->tries = $request['tries'] : "";
             ($request['queue'] != "") ? $sup->queue = $request['queue'] : "";
             ($request['timeout'] != "") ? $sup->timeout = $request['timeout'] : "";

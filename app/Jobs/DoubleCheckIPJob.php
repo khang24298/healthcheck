@@ -6,7 +6,6 @@ namespace App\Jobs;
 use App\Http\Controllers\Model\IPAddress;
 use Exception;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Carbon;
 use Throwable;
 class DoubleCheckIPJob extends Job
 {
@@ -30,44 +29,50 @@ class DoubleCheckIPJob extends Job
      */
     public function handle()
     {
-        $this->doubleCheckIP($this->ip);
+        $this->doubleCheckIP();
+        return;
     }
 
     // If failed_job
-    public function failed(Throwable $exception)
+    public function failed()
     {
         //Get execution time
-        $cur = shell_exec('date +"%d/%m/%y, %T"');
+        $cur = shell_exec('date +"%Y-%m-%d %T"');
         //Update value for ip
-        ($this->ip->attempts == 0) ? $this->ip->first_check = $cur : '';
+        // ($this->ip->attempts == 0) ? $this->ip->first_check = $cur : '';
+        $this->ip->attempts += 1;
+        $this->ip->final_check = $cur;
+        $this->ip->isChecking = false;
+        $this->ip->save();
+        dispatch($this);
+        return;
+    }
+    // Double Check IP
+    public function doubleCheckIP(){
+        if($this->isAliveIP($this->ip) == true){
+            $this->ip->status = true;
+        }
+        else{
+            $this->failed();
+        }
+        //Get execution time
+        $cur = shell_exec('date +"%Y-%m-%d %T"');
+   
+        //Update value for ip
+        // ($this->ip->attempts == 0) ? $this->ip->first_check = $cur : '';
         $this->ip->attempts += 1;
         $this->ip->final_check = $cur;
         $this->ip->isChecking = false;
         $this->ip->save();
     }
-    // Double Check IP
-    public function doubleCheckIP(IPAddress $ip){
-        if($this->isAliveIP($ip) == true){
-            $ip->status = true;
-        }
-        //Get execution time
-        $cur = shell_exec('date +"%d/%m/%y, %T"');
-   
-        //Update value for ip
-        ($ip->attempts == 0) ? $ip->first_check = $cur : '';
-        $ip->attempts += 1;
-        $ip->final_check = $cur;
-        $ip->isChecking = false;
-        $ip->save();
-    }
 
     //Check if IP alive or not 
-    public function isAliveIP(IPAddress $ip){
-        if($ip->port){ 
+    public function isAliveIP(){
+        if($this->ip->port){ 
             
             try{
                 $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
-                $result = socket_connect($socket, $ip->ip, $ip->port);
+                $result = socket_connect($socket, $this->ip->ip, $this->ip->port);
             }
             catch(Exception $e){
                 Log::info($e->getMessage());
@@ -76,14 +81,16 @@ class DoubleCheckIPJob extends Job
         }
         else{
             try{
-                $output = shell_exec("ping -c 1 -W 1 ".$ip->ip);
-                $re = explode("\n",$output);
-                if(count($re) == 7){
-                    $result = true;
+                $output = shell_exec("ping -c 8 -W 1 ".$this->ip->ip);
+                $outputs = explode("\n",$output);
+                $char = "round-trip";
+                foreach($outputs as $test){
+                    if (strpos($test, $char) !== false) {
+                        $result = true;
+                        break;
+                    }
                 }
-                else{
-                    $result = false;
-                }
+                $result = false;
             }
             catch(Exception $e){
                 $result = false;

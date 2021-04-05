@@ -1,2 +1,2 @@
-#!/bin/bash
-php ~/Sites/healthcheck/artisan --env=production  --sleep=123 --tries=123 --queue=123 --timeout=123 queue:listen
+#!/bin/sh
+php /Users/mac/Sites/healthcheck/artisan --queue=default --delay=3 queue:listen 
