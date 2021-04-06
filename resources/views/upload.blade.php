@@ -6,15 +6,23 @@
     <div class="container-fluid">
         <div>
             <form action="/api/add-ip" method="POST">
-
                 <div class="card-body">
                     <div class="form-group">
-                        <label for="exampleInputEmail1">Server IP Address</label>
-                        <input name="ip" type="text" class="form-control" id="exampleInputEmail1" placeholder="Enter IP">
+                        <label for="exampleInputEmail1">IP Address</label>
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-laptop"></i></span>
+                        </div>
+                        <input name="ip" type="text" class="form-control" placeholder="127.0.0.1" data-inputmask="'alias': 'ip'" data-mask="" im-insert="true">
                     </div>
                     <div class="form-group">
+                        <label for="exampleInputEmail1">IP Range</label>
+                        <input name="range" type="number" class="form-control" id="exampleInputEmail1" placeholder="/24">
+                    </div>
+                    
+                    <div class="form-group">
                         <label for="exampleInputPassword1">Port</label>
-                        <input name="port" type="number" class="form-control" id="exampleInputPassword1" placeholder="Port">
+                        From<input name="portFrom" type="number" class="form-control" id="exampleInputPassword1" placeholder=":0">
+                        To<input name="portTo" type="number" class="form-control" id="exampleInputPassword1" placeholder=":65353">
                     </div>
                     
                 </div>
@@ -43,5 +51,19 @@
 <script>
 $(function () {
   bsCustomFileInput.init();
+});
+$(document).ready(function(){
+    $(":input").inputmask();
+    $("#phone").inputmask({
+        mask: '999 999 9999',
+        placeholder: ' ',
+        showMaskOnHover: false,
+        showMaskOnFocus: false,
+        onBeforePaste: function (pastedValue, opts) {
+            var processedValue = pastedValue;
+            //do something with it
+            return processedValue;
+        }
+    });
 });
 </script>

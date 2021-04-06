@@ -11,7 +11,7 @@ class IPAddress extends Model{
     protected $table ="ipaddresses";
 
     protected $fillable = [
-        'ip', 'port','attempts','first_check','final_check','status'
+        'ip', 'port','total_attempts','first_check','final_die_time','final_alive_time','current_status'
     ];
 
 }

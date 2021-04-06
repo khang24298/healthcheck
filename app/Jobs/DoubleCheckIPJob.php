@@ -6,7 +6,8 @@ namespace App\Jobs;
 use App\Http\Controllers\Model\IPAddress;
 use Exception;
 use Illuminate\Support\Facades\Log;
-use Throwable;
+use phpDocumentor\Reflection\DocBlock\Tags\Throws;
+
 class DoubleCheckIPJob extends Job
 {
     /**
@@ -18,8 +19,6 @@ class DoubleCheckIPJob extends Job
     public function __construct(IPAddress $ip)
     {
         $this->ip = $ip;
-        $this->ip->isChecking = true;
-        $this->ip->save();
     }
 
     /**
@@ -29,54 +28,52 @@ class DoubleCheckIPJob extends Job
      */
     public function handle()
     {
+        $this->ip->isChecking = true;
+        $this->ip->save();
         $this->doubleCheckIP();
-        return;
     }
 
     // If failed_job
-    public function failed()
+    public function failed($e)
     {
         //Get execution time
-        $cur = shell_exec('date +"%Y-%m-%d %T"');
-        //Update value for ip
-        // ($this->ip->attempts == 0) ? $this->ip->first_check = $cur : '';
-        $this->ip->attempts += 1;
-        $this->ip->final_check = $cur;
+        $cur = now();
+        $this->ip->total_attempts += 1;
+        $this->ip->final_die_time = $cur;
+        $this->ip->current_status = false;
         $this->ip->isChecking = false;
         $this->ip->save();
-        dispatch($this);
-        return;
+        $job = (new CheckHealthJob($this->ip))->onQueue('first')->delay(300);
+        dispatch($job);
+        Log::error($e->getMessage());
     }
     // Double Check IP
     public function doubleCheckIP(){
-        if($this->isAliveIP($this->ip) == true){
-            $this->ip->status = true;
+        $cur = now();
+        
+        if($this->isAliveIP() == true){
+            $this->ip->current_status = true;
+            $this->ip->total_attempts += 1;
+            $this->ip->final_alive_time = $cur;
+            $this->ip->alive_times += 1;
+            $this->ip->isChecking = false;
+            $this->ip->save();
         }
         else{
-            $this->failed();
+            throw new Exception("Error: ",1);
         }
-        //Get execution time
-        $cur = shell_exec('date +"%Y-%m-%d %T"');
-   
-        //Update value for ip
-        // ($this->ip->attempts == 0) ? $this->ip->first_check = $cur : '';
-        $this->ip->attempts += 1;
-        $this->ip->final_check = $cur;
-        $this->ip->isChecking = false;
-        $this->ip->save();
     }
 
     //Check if IP alive or not 
     public function isAliveIP(){
+        $result = false;
         if($this->ip->port){ 
-            
             try{
                 $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
                 $result = socket_connect($socket, $this->ip->ip, $this->ip->port);
             }
             catch(Exception $e){
-                Log::info($e->getMessage());
-                $result = false;
+                Log::error($e->getMessage());
             }
         }
         else{
@@ -87,13 +84,10 @@ class DoubleCheckIPJob extends Job
                 foreach($outputs as $test){
                     if (strpos($test, $char) !== false) {
                         $result = true;
-                        break;
                     }
                 }
-                $result = false;
             }
             catch(Exception $e){
-                $result = false;
                 Log::info($e->getMessage());
             }
         }

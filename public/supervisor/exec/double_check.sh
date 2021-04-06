@@ -1,2 +1,2 @@
 #!/bin/sh
-php /Users/mac/Sites/healthcheck/artisan --queue=default --delay=3 queue:listen
+php /Users/mac/Sites/healthcheck/artisan queue:work --queue=double --tries=4

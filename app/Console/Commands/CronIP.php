@@ -40,6 +40,7 @@ class CronIP extends Command
      */
     public function handle()
     {
+        echo now();
         $results = Cache::remember('all_ip',300,function(){
             return IPAddress::where('status',0)->get();
         });

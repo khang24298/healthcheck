@@ -17,10 +17,8 @@ class CreateIpAddressesTable extends Migration
             $table->id();
             $table->string('ip')->default('127.0.0.1');
             $table->integer('port')->nullable();
-            $table->boolean('status')->default(false);
             $table->string('first_check')->nullable();
-            $table->string('final_check')->nullable();
-            $table->integer('attempts')->default(0);
+            $table->integer('total_attempts')->default(0);
             $table->timestamps();
         });
     }

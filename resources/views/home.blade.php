@@ -53,11 +53,11 @@
                     <td>{{ $item->ip }}</td>
                     <td>{{ $item->port }}</td>
                     <td>
-                        {{ ($item->status == 1) ? "Successful" : "Failed"  }}</td>
+                        {{ ($item->current_status == 1) ? "Successful" : "Failed"  }}</td>
                     <td>{{ ($item->isChecking == 1) ? "Checking" : "Done" }}</td>
                     <td>{{ $item->first_check }}</td>
-                    <td>{{ $item->final_check }}</td>
-                    <td>{{ $item->attempts }}</td>
+                    <td>{{ $item->final_alive_time }}</td>
+                    <td>{{ $item->total_attempts }}</td>
                   </tr>
                   @endforeach
                 @endif

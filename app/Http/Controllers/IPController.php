@@ -31,20 +31,20 @@ class IPController extends Controller
         }
         // return $result;
     }
-    public function firstCheckIP(IPAddress $ip){
-        if($this->isAliveIP($ip) == true){
-            $ip->status = true;
-        }
-        //Get execution time
-        $cur = shell_exec('date +"%y-%m-%d %T"');
+    // public function firstCheckIP(IPAddress $ip){
+    //     if($this->isAliveIP($ip) == true){
+    //         $ip->status = true;
+    //     }
+    //     //Get execution time
+    //     $cur = now();
    
-        //Update value for ip
-        ($ip->attempts == 0) ? $ip->first_check = $cur : '';
-        $ip->attempts += 1;
-        $ip->final_check = $cur;
-        $ip->isChecking = false;
-        $ip->save();
-    }
+    //     //Update value for ip
+    //     ($ip->attempts == 0) ? $ip->first_check = $cur : '';
+    //     $ip->attempts += 1;
+    //     $ip->final_check = $cur;
+    //     $ip->isChecking = false;
+    //     $ip->save();
+    // }
 
     //Check if IP alive or not 
     public function isAliveIP(IPAddress $ip){
@@ -100,7 +100,8 @@ class IPController extends Controller
         });
         foreach($results as $item)
         {
-            dispatch(new CheckHealthJob($item));
+            $job = (new CheckHealthJob($item))->onQueue('first');
+            dispatch($job);
         };
         return "Checking IP is in process";
     }
@@ -158,11 +159,68 @@ class IPController extends Controller
     public function insertIP(Request $request){
         // dd($request);
         try{
-            $ip = new IPAddress();
-            $ip->ip = $request->ip;
-            $ip->port = ($request->port != "") ? $request->port : null;
-            $ip->save();
-            dispatch(new CheckHealthJob($ip));
+            if($request->range != ""){
+                $ip_count = 1 << (32 - $request->range);
+                $start = ip2long($request->ip);
+                for ($i = 0; $i < $ip_count; $i++) {
+                    $ipadd = long2ip($start + $i);
+                    if($request->portTo != "" && $request->portFrom != ""){
+                        for($j = $request->portFrom; $j<= $request->portTo; $j++){
+                            $ip = new IPAddress();
+                            $ip->ip = $ipadd;
+                            $ip->port = $j;
+                            $ip->range = $request->range;
+                            $ip->save();
+                            $job = (new CheckHealthJob($ip))->onQueue('first');
+                            dispatch($job);
+                        }
+                    }
+                    else if($request->portTo != "" || $request->portFrom != ""){
+                        $ip = new IPAddress();
+                        $ip->ip = $ipadd;
+                        $ip->port = ($request->portTo != "") ? $request->portTo : $request->portFrom;
+                        $ip->range = $request->range;
+                        $ip->save();
+                        $job = (new CheckHealthJob($ip))->onQueue('first');
+                        dispatch($job);
+                    }
+                    else{
+                        $ip = new IPAddress();
+                        $ip->ip = $ipadd;
+                        $ip->range = $request->range;
+                        $ip->save();
+                        $job = (new CheckHealthJob($ip))->onQueue('first');
+                        dispatch($job);
+                    }
+                }
+            }
+            else{
+                if($request->portTo != "" && $request->portFrom != ""){
+                    for($j = $request->portFrom; $j<= $request->portTo; $j++){
+                        $ip = new IPAddress();
+                        $ip->ip = $request->ip;
+                        $ip->port = $j;
+                        $ip->save();
+                        $job = (new CheckHealthJob($ip))->onQueue('first');
+                        dispatch($job);
+                    }
+                }
+                else if($request->portTo != "" || $request->portFrom != ""){
+                    $ip = new IPAddress();
+                    $ip->ip = $request->ip;
+                    $ip->port = ($request->portTo != "") ? $request->portTo : $request->portFrom;
+                    $ip->save();
+                    $job = (new CheckHealthJob($ip))->onQueue('first');
+                    dispatch($job);
+                }
+                else{
+                    $ip = new IPAddress();
+                    $ip->ip = $request->ip;
+                    $ip->save();
+                    $job = (new CheckHealthJob($ip))->onQueue('first');
+                    dispatch($job);
+                }
+            }
             $mess = "success";
             $code = 200;
         }
