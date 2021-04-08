@@ -36,6 +36,7 @@
                   <thead>
                   <tr>
                     <th style="width:2em">Status</th>
+                    <th style="width:2em;">Internet Access</th>
                     <th style="width:2em">ID</th>
                     <th style="width:4em">Server IP</th>
                     <th style="width:2em">Port</th>
@@ -50,12 +51,17 @@
                 @if($data)
 
                   @foreach($data as $item)
-                    @if($item->isChecking == 0 && $item->isDoubleCheck == 0)
+                    @if($item->isChecking == 0 && $item->isDoubleCheck == 0 && $item->isNetCheck == 0)
                     <!-- Kiem tra neu da check xong -->
                       @if($item->current_status == 1)
                       <!-- Doi sang mau xanh neu song -->
                       <tr>
                         <td><img style="width: 2em; border-radius:50%" src="https://s.pngix.com/pngfile/s/96-964843_simple-green-check-button-clip-art-green-check.png" alt=""></td>
+                        @if($item->isInternetConnect == 1)
+                        <td><img style="width: 2em; border-radius:50%" src="https://s.pngix.com/pngfile/s/96-964843_simple-green-check-button-clip-art-green-check.png" alt=""></td>
+                        @else
+                        <td><img style="width: 2em; border-radius:50%" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS7cGyBBKloTyQ56XcpLM_8FZutq8Eb60XkIQ&usqp=CAU" alt=""></td>
+                        @endif
                         <td>{{ $item->id }}</td>
                         <td>{{ $item->ip }}</td>
                         <td>{{ $item->port }}</td>
@@ -71,6 +77,7 @@
                       @else
                       <!-- Doi sang mau xam neu chet -->
                       <tr>
+                        <td><img style="width: 2em; border-radius:50%" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS7cGyBBKloTyQ56XcpLM_8FZutq8Eb60XkIQ&usqp=CAU" alt=""></td>
                         <td><img style="width: 2em; border-radius:50%" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS7cGyBBKloTyQ56XcpLM_8FZutq8Eb60XkIQ&usqp=CAU" alt=""></td>
                         <td>{{ $item->id }}</td>
                         <td>{{ $item->ip }}</td>
@@ -88,6 +95,7 @@
                       <!-- Neu dang kiem tra thi de mau vang -->
                     @else
                       <tr>
+                        <td><img style="width: 2em; border-radius:50%" src="dist/img/isLoading.gif" alt=""></td>
                         <td><img style="width: 2em; border-radius:50%" src="dist/img/isLoading.gif" alt=""></td>
                         <td>{{ $item->id }}</td>
                         <td>{{ $item->ip }}</td>
@@ -117,6 +125,7 @@
                   <tfoot>
                   <tr>
                     <th>Status</th>
+                    <th>Internet Access</th>
                     <th>ID</th>
                     <th>Server IP</th>
                     <th>Port</th>
