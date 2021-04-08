@@ -51,3 +51,11 @@ Update 31/03/2021
 2. Có thể chỉnh sửa supervisor config
 3. Thêm cronjob cho double check 
 "5 * * * * cd /your-project-path && php artisan cronip:update >> /dev/null 2>&1"
+
+-----
+Update 08/04/2021
+1. /Jobs/CheckNetJob.php
+    => Xây dựng tính năng kiểm tra internet access của IP sống (các IP có status == true).
+2. Quy trình chạy:
+    => /Jobs/CheckHealthJob sẽ chạy đầu tiên nếu IP sống sẽ dispatch job CheckNet => CheckNetJob chạy, kiểm tra và update trạng thái vào cột isInternetConnect = 0(Ko kết nối được) hoặc = 1 (nết kết nối đến internet thành công).
+3. CheckNetJob sẽ được chạy tự động khi CheckHealthJob chạy thành công và current_status = 1.
