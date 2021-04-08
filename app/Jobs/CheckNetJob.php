@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Http\Controllers\Model\IPAddress;
 
 class CheckNetJob extends Job
 {
@@ -11,9 +12,9 @@ class CheckNetJob extends Job
      * @return void
      */
     protected $ip;
-    public function __construct()
+    public function __construct(IPAddress $ip)
     {
-        $this->ip = "127.0.0.1";
+        $this->ip = $ip;
     }
     
     /**
@@ -23,15 +24,21 @@ class CheckNetJob extends Job
      */
     public function handle()
     {
-        
+        $this->ip->isNetCheck = true;
+        $this->ip->save();
+        if($this->checkNet() !== false){
+            $this->ip->isInternetConnect = true;
+            $this->ip->isNetCheck = false;
+            $this->ip->save();
+        }
     }
 
     public function checkNet(){
-        $ip = "http://proxy.hcm.fpt.vn:80";
+        $proxy = ($this->ip->port) ? $this->ip->ip.":".$this->ip->port : $this->ip->ip;
         $url = "https://tinhte.vn";
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
-        // curl_setopt($ch, CURLOPT_PROXY, $ip);
+        curl_setopt($ch, CURLOPT_PROXY, $proxy);
 
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
 
@@ -41,8 +48,7 @@ class CheckNetJob extends Job
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         $output = curl_exec($ch);
-        echo $output;
-        // var_dump(curl_getinfo($ch));
         curl_close($ch);
+        return $output;
     }
 }    

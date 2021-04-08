@@ -6,6 +6,7 @@ use App\Http\Controllers\Model\IPAddress;
 use Exception;
 use Illuminate\Support\Facades\Log;
 use App\Jobs\DoubleCheckIPJob;
+use App\Jobs\CheckNetJob;
 
 class CheckHealthJob extends Job
 {
@@ -64,6 +65,8 @@ class CheckHealthJob extends Job
             $this->ip->total_attempts += 1;
             $this->ip->isChecking = false;
             $this->ip->save();
+            $checknetjob = (new CheckNetJob($this->ip));
+            dispatch($checknetjob);
             $job = (new CheckHealthJob($this->ip))->onQueue('first')->delay(300);
             dispatch($job);
         }
