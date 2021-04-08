@@ -28,7 +28,7 @@ class DoubleCheckIPJob extends Job
      */
     public function handle()
     {
-        $this->ip->isChecking = true;
+        $this->ip->isDoubleCheck = true;
         $this->ip->save();
         $this->doubleCheckIP();
     }
@@ -41,7 +41,7 @@ class DoubleCheckIPJob extends Job
         $this->ip->total_attempts += 1;
         $this->ip->final_die_time = $cur;
         $this->ip->current_status = false;
-        $this->ip->isChecking = false;
+        $this->ip->isDoubleCheck = false;
         $this->ip->save();
         $job = (new CheckHealthJob($this->ip))->onQueue('first')->delay(300);
         dispatch($job);
@@ -56,7 +56,7 @@ class DoubleCheckIPJob extends Job
             $this->ip->total_attempts += 1;
             $this->ip->final_alive_time = $cur;
             $this->ip->alive_times += 1;
-            $this->ip->isChecking = false;
+            $this->ip->isDoubleCheck = false;
             $this->ip->save();
         }
         else{

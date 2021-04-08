@@ -24,7 +24,7 @@ $router->group(['prefix' => 'api'], function () use ($router) {
     $router->get('/ip-fail','IPController@getIPFail');
     $router->get('/ip-info/{ip}','IPController@getIPInfo');
     $router->post('/add-ip','IPController@insertIP');
-    $router->post('/test-ip','IPController@testIP');
+    $router->get('/test-ip','IPController@testIP');
     // SupervisorController
     $router->get('/supervisor/{id}','SupervisorController@runSupervisor');
     $router->get('/supervisor-edit/{id}','SupervisorController@show');

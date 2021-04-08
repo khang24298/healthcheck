@@ -21,14 +21,23 @@ class IPController extends Controller
         //
     }
 
-    public function testIP(Request $request){
-        $results = IPAddress::all();
-        foreach($results as $result){
-            if($this->firstCheckIP($result)){
-                echo "\n".$result->ip;
-                echo "\n".$result->status;
-            }
-        }
+    public function testIP(){
+        $ip = ($this->ip->port) ? $this->ip->ip.":".$this->ip->port : $this->ip->ip;
+        $url = "https://tinhte.vn";
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_PROXY, $ip);
+
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
+
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $timeout = 6;
+        curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        $output = curl_exec($ch);
+        curl_close($ch);
+
         // return $result;
     }
     // public function firstCheckIP(IPAddress $ip){

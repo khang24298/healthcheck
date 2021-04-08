@@ -32,47 +32,98 @@
               </div>
               <!-- /.card-header -->
               <div class="card-body">
-                <table id="example1" class="table table-bordered table-striped">
+                <table id="example1" class="table table-bordered">
                   <thead>
                   <tr>
-                    <th>ID</th>
-                    <th>Server IP</th>
-                    <th>Port</th>
-                    <th>Alive</th>
-                    <th>Checking</th>
-                    <th>First Check</th>
-                    <th>Final Check</th>
-                    <th>Attempts</th>
+                    <th style="width:2em">Status</th>
+                    <th style="width:2em">ID</th>
+                    <th style="width:4em">Server IP</th>
+                    <th style="width:2em">Port</th>
+                    <th style="width:1em">Total Attempts</th>
+                    <th style="width:2em">Current Job</th>
+                    <th style="width:2em">Final Die</th>
+                    <th style="width:2em">Final Alive</th>
+                    <th style="width:1em">Alive Times</th>
                   </tr>
                   </thead>
                   <tbody>
                 @if($data)
+
                   @foreach($data as $item)
-                  <tr>
-                    <td>{{ $item->id }}</td>
-                    <td>{{ $item->ip }}</td>
-                    <td>{{ $item->port }}</td>
-                    <td>
-                        {{ ($item->current_status == 1) ? "Successful" : "Failed"  }}</td>
-                    <td>{{ ($item->isChecking == 1) ? "Checking" : "Done" }}</td>
-                    <td>{{ $item->first_check }}</td>
-                    <td>{{ $item->final_alive_time }}</td>
-                    <td>{{ $item->total_attempts }}</td>
-                  </tr>
+                    @if($item->isChecking == 0 && $item->isDoubleCheck == 0)
+                    <!-- Kiem tra neu da check xong -->
+                      @if($item->current_status == 1)
+                      <!-- Doi sang mau xanh neu song -->
+                      <tr>
+                        <td><img style="width: 2em; border-radius:50%" src="https://s.pngix.com/pngfile/s/96-964843_simple-green-check-button-clip-art-green-check.png" alt=""></td>
+                        <td>{{ $item->id }}</td>
+                        <td>{{ $item->ip }}</td>
+                        <td>{{ $item->port }}</td>
+                        <td>{{ $item->total_attempts }}</td>
+                        <td class="d-inline border-0">
+                          <button class="btn bg-secondary">First</button>
+                          <button class="btn bg-secondary float-right">Second</button>
+                        </td>
+                        <td>{{ $item->final_die_time }}</td>
+                        <td>{{ $item->final_alive_time }}</td>
+                        <td>{{ $item->alive_times }}</td>
+                      </tr>
+                      @else
+                      <!-- Doi sang mau xam neu chet -->
+                      <tr>
+                        <td><img style="width: 2em; border-radius:50%" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS7cGyBBKloTyQ56XcpLM_8FZutq8Eb60XkIQ&usqp=CAU" alt=""></td>
+                        <td>{{ $item->id }}</td>
+                        <td>{{ $item->ip }}</td>
+                        <td>{{ $item->port }}</td>
+                        <td>{{ $item->total_attempts }}</td>
+                        <td class="d-inline border-0">
+                          <button class="btn bg-secondary">First</button>
+                          <button class="btn bg-secondary float-right">Second</button>
+                        </td>
+                        <td>{{ $item->final_die_time }}</td>
+                        <td>{{ $item->final_alive_time }}</td>
+                        <td>{{ $item->alive_times }}</td>
+                      </tr>
+                      @endif
+                      <!-- Neu dang kiem tra thi de mau vang -->
+                    @else
+                      <tr>
+                        <td><img style="width: 2em; border-radius:50%" src="dist/img/isLoading.gif" alt=""></td>
+                        <td>{{ $item->id }}</td>
+                        <td>{{ $item->ip }}</td>
+                        <td>{{ $item->port }}</td>
+                        <td>{{ $item->total_attempts }}</td>
+                        <td>
+                          @if($item->isChecking == 1)
+                          <div class="d-inline">
+                            <button class="btn btn-success">First</button>
+                            <button class="btn btn-secondary float-right">Second</button>
+                          </div>
+                          @else
+                          <div class="d-inline">
+                            <button class="btn btn-secondary">First</button>
+                            <button class="btn btn-success float-right">Second</button>
+                          </div>
+                          @endif
+                        </td>
+                        <td>{{ $item->final_die_time }}</td>
+                        <td>{{ $item->final_alive_time }}</td>
+                        <td>{{ $item->alive_times }}</td>
+                      </tr>
+                    @endif
                   @endforeach
                 @endif
                   </tbody>
                   <tfoot>
                   <tr>
+                    <th>Status</th>
                     <th>ID</th>
                     <th>Server IP</th>
                     <th>Port</th>
-                    <th>Alive</th>
-                    <th>Checking</th>
-                    <th>First Check</th>
-                    <th>Final Check</th>
-                    <th>Attempts</th>
-                    
+                    <th>Total Attempts</th>
+                    <th>Current Job</th>
+                    <th>Final Alive</th>   
+                    <th>Alive Times</th>                  
                   </tr>
                   </tfoot>
                 </table>
