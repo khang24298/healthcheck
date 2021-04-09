@@ -23,8 +23,8 @@ class IPController extends Controller
 
     public function testIP(){
         $timeout = 10;
-        $ip = "210.245.31.15";
-        $port = "80";
+        $ip = "42.119.139.254";
+        $port = "3128";
         $url = 'https://google.com';
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
@@ -37,10 +37,10 @@ class IPController extends Controller
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
-        curl_exec($ch); 
-        $curl_info = curl_getinfo($ch);
+        $output = curl_exec($ch); 
+        // $curl_info = curl_getinfo($ch);
         curl_close($ch);
-        dd($curl_info);
+        dd($output);
         // return $output;
         // $result = false;
         // try{

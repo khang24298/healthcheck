@@ -74,7 +74,7 @@
                         </td>
 
                         <!-- Ti le song -->
-                        <td>{{ ($item->alive_times/$item->total_attempts)*100 }} %</td>
+                        <td>{{ (number_format($item->alive_times/$item->total_attempts,2))*100 }} %</td>
                         
                         <!-- Internet Access -->
                         <td>
@@ -94,7 +94,7 @@
                         </td>
 
                         <!-- Ti le access internet -->
-                        <td>{{ ($item->net_access_times/$item->alive_times)*100 }} %</td>
+                        <td>{{ (number_format($item->net_access_times/$item->alive_times,2))*100 }} %</td>
 
                         <!-- Thoi gian chet gan nhat -->
                         <td>{{ $item->final_die_time }}</td>
@@ -124,7 +124,7 @@
                         </td>
 
                         <!-- Ti le song -->
-                        <td>{{ ($item->alive_times/$item->total_attempts)*100 }} %</td>
+                        <td>{{ (number_format($item->alive_times/$item->total_attempts,2))*100 }} %</td>
                         
                         <!-- Internet Access -->
                         <td>
@@ -144,7 +144,7 @@
                         </td>
 
                         <!-- Ti le access internet -->
-                        <td>{{ ($item->net_access_times/$item->alive_times)*100 }} %</td>
+                        <td>{{ (number_format($item->net_access_times/$item->alive_times,2))*100 }} %</td>
 
                         <!-- Thoi gian chet gan nhat -->
                         <td>{{ $item->final_die_time }}</td>
