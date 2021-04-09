@@ -30,9 +30,12 @@ class CheckNetJob extends Job
         if($this->checkNet() !== false){
             $this->ip->isInternetConnect = true;
             $this->ip->isNetCheck = false;
+            $this->ip->net_access_times += 1;
             $this->ip->save();
         }
         else{
+            $this->ip->isNetCheck = false;
+            $this->ip->save();
             throw new Exception("Error while check net ",1);
         }
     }

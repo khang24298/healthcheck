@@ -36,102 +36,122 @@
                   <thead>
                   <tr>
                     <th style="width:2em">ID</th>
-                    <th style="width:2em">Status</th>
-                    <th style="width:2em">Internet Access</th>
                     <th style="width:3em">Server IP</th>
                     <th style="width:2em">Port</th>
-                    <th style="width:1em">Total Attempts</th>
-                    <th style="width:25%">Current Job</th>
+                    <th style="width:2em">Status</th>
+                    <th style="width:1em">Ratio Alive</th>
+                    <th style="width:2em">Internet Access</th>
+                    <th style="width:1em">Ratio Internet Access</th>
                     <th style="width:2em">Final Die</th>
                     <th style="width:2em">Final Alive</th>
-                    <th style="width:1em">Alive Times</th>
                   </tr>
                   </thead>
                   <tbody>
                 @if($data)
 
                   @foreach($data as $item)
-                    @if($item->isChecking == 0 && $item->isDoubleCheck == 0 && $item->isNetCheck == 0)
-                    <!-- Kiem tra neu da check xong -->
-                      @if($item->current_status == 1)
-                      <!-- Doi sang mau xanh neu song -->
+                    @if($item->isChecking == 0 && $item->isDoubleCheck == 0)
+                    <!-- First va double deu chay xong -->
                       <tr>
+                        <!-- ID -->
                         <td>{{ $item->id }}</td>
-                        <td><img style="width: 2em; border-radius:50%" src="https://s.pngix.com/pngfile/s/96-964843_simple-green-check-button-clip-art-green-check.png" alt=""></td>
-                        @if($item->isInternetConnect == 1)
-                        <td><img style="width: 2em; border-radius:50%" src="https://s.pngix.com/pngfile/s/96-964843_simple-green-check-button-clip-art-green-check.png" alt=""></td>
-                        @else
-                        <td><img style="width: 2em; border-radius:50%" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS7cGyBBKloTyQ56XcpLM_8FZutq8Eb60XkIQ&usqp=CAU" alt=""></td>
-                        @endif
+
+                        <!-- IP -->
                         <td>{{ $item->ip }}</td>
+
+                        <!-- PORT -->
                         <td>{{ $item->port }}</td>
-                        <td>{{ $item->total_attempts }}</td>
-                        <td class="d-inline border-0">
-                          <button class="btn bg-secondary">First</button>
-                          <button class="btn bg-secondary">Check Net</button>
-                          <button class="btn bg-secondary">Second</button>
-                        </td>
-                        <td>{{ $item->final_die_time }}</td>
-                        <td>{{ $item->final_alive_time }}</td>
-                        <td>{{ $item->alive_times }}</td>
-                      </tr>                      
-                      @else
-                      <!-- Doi sang mau xam neu chet -->
-                      <tr>
-                        <td>{{ $item->id }}</td>
-                        <td><img style="width: 2em; border-radius:50%" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS7cGyBBKloTyQ56XcpLM_8FZutq8Eb60XkIQ&usqp=CAU" alt=""></td>
-                        <td><img style="width: 2em; border-radius:50%" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS7cGyBBKloTyQ56XcpLM_8FZutq8Eb60XkIQ&usqp=CAU" alt=""></td>
-                        <td>{{ $item->ip }}</td>
-                        <td>{{ $item->port }}</td>
-                        <td>{{ $item->total_attempts }}</td>
-                        <td class="d-inline border-0">
-                          <button class="btn bg-secondary">First</button>
-                          <button class="btn bg-secondary">Check Net</button>
-                          <button class="btn bg-secondary">Second</button>
-                        </td>
-                        <td>{{ $item->final_die_time }}</td>
-                        <td>{{ $item->final_alive_time }}</td>
-                        <td>{{ $item->alive_times }}</td>
-                      </tr>
-                      @endif
-                      <!-- Neu dang kiem tra thi de mau vang -->
-                    @else
-                      <tr>
-                        <td>{{ $item->id }}</td>
-                        @if($item->isChecking == 0 && $item->current_status == 1 && $item->isNetCheck == 1)
-                        <td><img style="width: 2em; border-radius:50%" src="dist/img/isLoading.gif" alt=""></td>
-                        @else
-                        <td><img style="width: 2em; border-radius:50%" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS7cGyBBKloTyQ56XcpLM_8FZutq8Eb60XkIQ&usqp=CAU" alt=""></td>
-                        @endif
-                        <td><img style="width: 2em; border-radius:50%" src="dist/img/isLoading.gif" alt=""></td>
-                        <td>{{ $item->ip }}</td>
-                        <td>{{ $item->port }}</td>
-                        <td>{{ $item->total_attempts }}</td>
+
+                        <!-- Status  -->
                         <td>
-                          @if($item->isChecking == 1)
-                          <div class="d-inline">
-                            <button class="btn btn-success">First</button>
-                            <button class="btn btn-secondary">Check Net</button>
-                            <button class="btn btn-secondary">Second</button>
-                          </div>
-                          @elseif($item->isNetCheck == 1)
-                          <div class="d-inline">
-                            <button class="btn btn-secondary">First</button>
-                            <button class="btn btn-success">Check Net</button>
-                            <button class="btn btn-secondary">Second</button>
-                          </div>
+                          @if($item->current_status == 1)
+                          <!-- Icon success neu song -->
+                          <img style="width: 2em; border-radius:50%" src="https://s.pngix.com/pngfile/s/96-964843_simple-green-check-button-clip-art-green-check.png" alt="">
                           @else
-                          <div class="d-inline">
-                            <button class="btn btn-secondary">First</button>
-                            <button class="btn btn-secondary">Check Net</button>
-                            <button class="btn btn-success">Second</button>
-                          </div>
+                          <!-- Icon fail neu chet -->
+                          <img style="width: 2em; border-radius:50%" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS7cGyBBKloTyQ56XcpLM_8FZutq8Eb60XkIQ&usqp=CAU" alt="">
                           @endif
                         </td>
+
+                        <!-- Ti le song -->
+                        <td>{{ ($item->alive_times/$item->total_attempts)*100 }} %</td>
+                        
+                        <!-- Internet Access -->
+                        <td>
+                          @if($item->isNetCheck == 1)
+                          <!-- Icon loading neu dang check net -->
+                          <img style="width: 2em; border-radius:50%" src="dist/img/isLoading.gif" alt=""></td>
+                          @else
+                          <!-- Neu da check net xong -->
+                            @if($item->isInternetConnect == 1)
+                            <!-- Icon success neu access dc internet -->
+                            <img style="width: 2em; border-radius:50%" src="https://s.pngix.com/pngfile/s/96-964843_simple-green-check-button-clip-art-green-check.png" alt="">
+                            @else
+                            <!-- Icon fail neu ko access dc internet -->
+                            <img style="width: 2em; border-radius:50%" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS7cGyBBKloTyQ56XcpLM_8FZutq8Eb60XkIQ&usqp=CAU" alt=""> 
+                            @endif
+                          @endif
+                        </td>
+
+                        <!-- Ti le access internet -->
+                        <td>{{ ($item->net_access_times/$item->alive_times)*100 }} %</td>
+
+                        <!-- Thoi gian chet gan nhat -->
                         <td>{{ $item->final_die_time }}</td>
+
+                        <!-- Thoi gian song gan nhat -->
                         <td>{{ $item->final_alive_time }}</td>
-                        <td>{{ $item->alive_times }}</td>
-                      </tr>
+                      </tr>                     
+                    @else
+                    <!-- Mot trong 2 thang dang chay -->
+                      <tr>
+                        <!-- ID -->
+                        <td>{{ $item->id }}</td>
+
+                        <!-- IP -->
+                        <td>{{ $item->ip }}</td>
+
+                        <!-- PORT -->
+                        <td>{{ $item->port }}</td>
+
+                        <!-- Status   -->
+                        <td>
+                          @if($item->isChecking == 1)
+                          <button class="btn bg-success">First</button>
+                          @else
+                          <button class="btn bg-success">Second</button>
+                          @endif
+                        </td>
+
+                        <!-- Ti le song -->
+                        <td>{{ ($item->alive_times/$item->total_attempts)*100 }} %</td>
+                        
+                        <!-- Internet Access -->
+                        <td>
+                          @if($item->isNetCheck == 1)
+                          <!-- Icon loading neu dang check net -->
+                          <img style="width: 2em; border-radius:50%" src="dist/img/isLoading.gif" alt=""></td>
+                          @else
+                          <!-- Neu da check net xong -->
+                            @if($item->isInternetConnect == 1)
+                            <!-- Icon success neu access dc internet -->
+                            <img style="width: 2em; border-radius:50%" src="https://s.pngix.com/pngfile/s/96-964843_simple-green-check-button-clip-art-green-check.png" alt="">
+                            @else
+                            <!-- Icon fail neu ko access dc internet -->
+                            <img style="width: 2em; border-radius:50%" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS7cGyBBKloTyQ56XcpLM_8FZutq8Eb60XkIQ&usqp=CAU" alt=""> 
+                            @endif
+                          @endif
+                        </td>
+
+                        <!-- Ti le access internet -->
+                        <td>{{ ($item->net_access_times/$item->alive_times)*100 }} %</td>
+
+                        <!-- Thoi gian chet gan nhat -->
+                        <td>{{ $item->final_die_time }}</td>
+
+                        <!-- Thoi gian song gan nhat -->
+                        <td>{{ $item->final_alive_time }}</td>
+                      </tr> 
                     @endif
                   @endforeach
                 @endif
@@ -139,15 +159,14 @@
                   <tfoot>
                   <tr>
                     <th>ID</th>
-                    <th>Status</th>
-                    <th>Internet Access</th>
                     <th>Server IP</th>
                     <th>Port</th>
-                    <th>Total Attempts</th>
-                    <th>Current Job</th>
+                    <th>Status</th>
+                    <th>Ratio Alive</th>
+                    <th>Internet Access</th>
+                    <th>Ratio Internet Access</th>
                     <th>Final Die</th>
-                    <th>Final Alive</th>   
-                    <th>Alive Times</th>                  
+                    <th>Final Alive</th>                  
                   </tr>
                   </tfoot>
                 </table>
