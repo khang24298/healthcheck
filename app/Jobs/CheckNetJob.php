@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Http\Controllers\Model\IPAddress;
+use Exception;
 
 class CheckNetJob extends Job
 {
@@ -31,22 +32,27 @@ class CheckNetJob extends Job
             $this->ip->isNetCheck = false;
             $this->ip->save();
         }
+        else{
+            throw new Exception("Error while check net ",1);
+        }
     }
 
     public function checkNet(){
-        $proxy = ($this->ip->port) ? $this->ip->ip.":".$this->ip->port : $this->ip->ip;
+        $timeout = 30;
         $url = "https://tinhte.vn";
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_PROXY, $proxy);
-
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
-
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        $timeout = 6;
-        curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
+        curl_setopt($ch, CURLOPT_PROXY, $this->ip);
+        if($this->ip->port){
+            curl_setopt($ch, CURLOPT_PROXYPORT, $this->ip->port);
+        }
+        curl_setopt($ch, CURLOPT_HTTPPROXYTUNNEL, 1);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, false);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST,'GET');
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
         $output = curl_exec($ch);
         curl_close($ch);
         return $output;

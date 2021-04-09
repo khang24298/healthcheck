@@ -22,22 +22,35 @@ class IPController extends Controller
     }
 
     public function testIP(){
-        $ip = ($this->ip->port) ? $this->ip->ip.":".$this->ip->port : $this->ip->ip;
-        $url = "https://tinhte.vn";
+        $timeout = 10;
+        $ip = "210.245.31.15";
+        $port = "80";
+        $url = 'https://google.com';
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_PROXY, $ip);
-
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
-
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        $timeout = 6;
-        curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
+        curl_setopt($ch, CURLOPT_PROXYPORT, $port);
+        curl_setopt($ch, CURLOPT_HTTPPROXYTUNNEL, 1);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, false);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST,'GET');
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        $output = curl_exec($ch);
+        curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
+        curl_exec($ch); 
+        $curl_info = curl_getinfo($ch);
         curl_close($ch);
-
+        dd($curl_info);
+        // return $output;
+        // $result = false;
+        // try{
+        //     $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
+        //     $result = socket_connect($socket, $ip, $port);
+        // }
+        // catch(Exception $e){
+        //     $result = false;
+        // }
+        
         // return $result;
     }
     // public function firstCheckIP(IPAddress $ip){
@@ -67,22 +80,7 @@ class IPController extends Controller
                 $result = false;
             }
         }
-        else{
-            try{
-                $output = shell_exec("ping -c 8 -W 1 ".$ip->ip);
-                $outputs = explode("\n",$output);
-                $char = "round-trip";
-                foreach($outputs as $test){
-                    if (strpos($test, $char) !== false) {
-                        return true;
-                    }
-                }
-                return false;
-            }
-            catch(Exception $e){
-                $result = false;
-            }
-        }
+        
         return $result;
     }
     public function index(){

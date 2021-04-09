@@ -65,7 +65,7 @@ class CheckHealthJob extends Job
             $this->ip->total_attempts += 1;
             $this->ip->isChecking = false;
             $this->ip->save();
-            $checknetjob = (new CheckNetJob($this->ip));
+            $checknetjob = (new CheckNetJob($this->ip))->onQueue('default');
             dispatch($checknetjob);
             $job = (new CheckHealthJob($this->ip))->onQueue('first')->delay(300);
             dispatch($job);
@@ -89,7 +89,7 @@ class CheckHealthJob extends Job
         }
         else{
             try{
-                $output = shell_exec("ping -c 8 -W 1 ".$this->ip->ip);
+                $output = shell_exec("ping -c 8 ".$this->ip->ip);
                 $outputs = explode("\n",$output);
                 $char = "round-trip";
                 foreach($outputs as $test){

@@ -35,13 +35,13 @@
                 <table id="example1" class="table table-bordered">
                   <thead>
                   <tr>
-                    <th style="width:2em">Status</th>
-                    <th style="width:2em;">Internet Access</th>
                     <th style="width:2em">ID</th>
-                    <th style="width:4em">Server IP</th>
+                    <th style="width:2em">Status</th>
+                    <th style="width:2em">Internet Access</th>
+                    <th style="width:3em">Server IP</th>
                     <th style="width:2em">Port</th>
                     <th style="width:1em">Total Attempts</th>
-                    <th style="width:2em">Current Job</th>
+                    <th style="width:25%">Current Job</th>
                     <th style="width:2em">Final Die</th>
                     <th style="width:2em">Final Alive</th>
                     <th style="width:1em">Alive Times</th>
@@ -56,36 +56,38 @@
                       @if($item->current_status == 1)
                       <!-- Doi sang mau xanh neu song -->
                       <tr>
+                        <td>{{ $item->id }}</td>
                         <td><img style="width: 2em; border-radius:50%" src="https://s.pngix.com/pngfile/s/96-964843_simple-green-check-button-clip-art-green-check.png" alt=""></td>
                         @if($item->isInternetConnect == 1)
                         <td><img style="width: 2em; border-radius:50%" src="https://s.pngix.com/pngfile/s/96-964843_simple-green-check-button-clip-art-green-check.png" alt=""></td>
                         @else
                         <td><img style="width: 2em; border-radius:50%" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS7cGyBBKloTyQ56XcpLM_8FZutq8Eb60XkIQ&usqp=CAU" alt=""></td>
                         @endif
-                        <td>{{ $item->id }}</td>
                         <td>{{ $item->ip }}</td>
                         <td>{{ $item->port }}</td>
                         <td>{{ $item->total_attempts }}</td>
                         <td class="d-inline border-0">
                           <button class="btn bg-secondary">First</button>
-                          <button class="btn bg-secondary float-right">Second</button>
+                          <button class="btn bg-secondary">Check Net</button>
+                          <button class="btn bg-secondary">Second</button>
                         </td>
                         <td>{{ $item->final_die_time }}</td>
                         <td>{{ $item->final_alive_time }}</td>
                         <td>{{ $item->alive_times }}</td>
-                      </tr>
+                      </tr>                      
                       @else
                       <!-- Doi sang mau xam neu chet -->
                       <tr>
-                        <td><img style="width: 2em; border-radius:50%" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS7cGyBBKloTyQ56XcpLM_8FZutq8Eb60XkIQ&usqp=CAU" alt=""></td>
-                        <td><img style="width: 2em; border-radius:50%" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS7cGyBBKloTyQ56XcpLM_8FZutq8Eb60XkIQ&usqp=CAU" alt=""></td>
                         <td>{{ $item->id }}</td>
+                        <td><img style="width: 2em; border-radius:50%" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS7cGyBBKloTyQ56XcpLM_8FZutq8Eb60XkIQ&usqp=CAU" alt=""></td>
+                        <td><img style="width: 2em; border-radius:50%" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS7cGyBBKloTyQ56XcpLM_8FZutq8Eb60XkIQ&usqp=CAU" alt=""></td>
                         <td>{{ $item->ip }}</td>
                         <td>{{ $item->port }}</td>
                         <td>{{ $item->total_attempts }}</td>
                         <td class="d-inline border-0">
                           <button class="btn bg-secondary">First</button>
-                          <button class="btn bg-secondary float-right">Second</button>
+                          <button class="btn bg-secondary">Check Net</button>
+                          <button class="btn bg-secondary">Second</button>
                         </td>
                         <td>{{ $item->final_die_time }}</td>
                         <td>{{ $item->final_alive_time }}</td>
@@ -95,9 +97,13 @@
                       <!-- Neu dang kiem tra thi de mau vang -->
                     @else
                       <tr>
-                        <td><img style="width: 2em; border-radius:50%" src="dist/img/isLoading.gif" alt=""></td>
-                        <td><img style="width: 2em; border-radius:50%" src="dist/img/isLoading.gif" alt=""></td>
                         <td>{{ $item->id }}</td>
+                        @if($item->isChecking == 0 && $item->current_status == 1 && $item->isNetCheck == 1)
+                        <td><img style="width: 2em; border-radius:50%" src="dist/img/isLoading.gif" alt=""></td>
+                        @else
+                        <td><img style="width: 2em; border-radius:50%" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS7cGyBBKloTyQ56XcpLM_8FZutq8Eb60XkIQ&usqp=CAU" alt=""></td>
+                        @endif
+                        <td><img style="width: 2em; border-radius:50%" src="dist/img/isLoading.gif" alt=""></td>
                         <td>{{ $item->ip }}</td>
                         <td>{{ $item->port }}</td>
                         <td>{{ $item->total_attempts }}</td>
@@ -105,12 +111,20 @@
                           @if($item->isChecking == 1)
                           <div class="d-inline">
                             <button class="btn btn-success">First</button>
-                            <button class="btn btn-secondary float-right">Second</button>
+                            <button class="btn btn-secondary">Check Net</button>
+                            <button class="btn btn-secondary">Second</button>
+                          </div>
+                          @elseif($item->isNetCheck == 1)
+                          <div class="d-inline">
+                            <button class="btn btn-secondary">First</button>
+                            <button class="btn btn-success">Check Net</button>
+                            <button class="btn btn-secondary">Second</button>
                           </div>
                           @else
                           <div class="d-inline">
                             <button class="btn btn-secondary">First</button>
-                            <button class="btn btn-success float-right">Second</button>
+                            <button class="btn btn-secondary">Check Net</button>
+                            <button class="btn btn-success">Second</button>
                           </div>
                           @endif
                         </td>
@@ -124,13 +138,14 @@
                   </tbody>
                   <tfoot>
                   <tr>
+                    <th>ID</th>
                     <th>Status</th>
                     <th>Internet Access</th>
-                    <th>ID</th>
                     <th>Server IP</th>
                     <th>Port</th>
                     <th>Total Attempts</th>
                     <th>Current Job</th>
+                    <th>Final Die</th>
                     <th>Final Alive</th>   
                     <th>Alive Times</th>                  
                   </tr>

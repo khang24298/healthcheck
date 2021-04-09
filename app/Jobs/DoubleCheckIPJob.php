@@ -78,7 +78,7 @@ class DoubleCheckIPJob extends Job
         }
         else{
             try{
-                $output = shell_exec("ping -c 8 -W 1 ".$this->ip->ip);
+                $output = shell_exec("ping -c 8 ".$this->ip->ip);
                 $outputs = explode("\n",$output);
                 $char = "round-trip";
                 foreach($outputs as $test){
