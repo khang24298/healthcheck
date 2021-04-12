@@ -36,7 +36,7 @@ class CheckNetJob extends Job
         else{
             $this->ip->isNetCheck = false;
             $this->ip->save();
-            throw new Exception("Error while check net ",1);
+            // throw new Exception("Error while check net ",1);
         }
     }
 
@@ -45,7 +45,7 @@ class CheckNetJob extends Job
         $url = "https://tinhte.vn";
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_PROXY, $this->ip);
+        curl_setopt($ch, CURLOPT_PROXY, $this->ip->ip);
         if($this->ip->port){
             curl_setopt($ch, CURLOPT_PROXYPORT, $this->ip->port);
         }

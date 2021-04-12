@@ -22,14 +22,16 @@ class IPController extends Controller
     }
 
     public function testIP(){
-        $timeout = 10;
-        $ip = "42.119.139.254";
-        $port = "3128";
-        $url = 'https://google.com';
+        $timeout = 30;
+        $ip = "188.166.125.206";
+        $port = "32910";
+        $url = "https://google.com.vn";
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_PROXY, $ip);
-        curl_setopt($ch, CURLOPT_PROXYPORT, $port);
+        if($port){
+            curl_setopt($ch, CURLOPT_PROXYPORT, $port);
+        }
         curl_setopt($ch, CURLOPT_HTTPPROXYTUNNEL, 1);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, false);
@@ -37,11 +39,10 @@ class IPController extends Controller
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
-        $output = curl_exec($ch); 
-        // $curl_info = curl_getinfo($ch);
+        curl_exec($ch);
+        $info = curl_getinfo($ch);
         curl_close($ch);
-        dd($output);
-        // return $output;
+        dd($info);
         // $result = false;
         // try{
         //     $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
@@ -85,10 +86,11 @@ class IPController extends Controller
     }
     public function index(){
         try{
-            $results = Cache::remember('all_ip',300, function(){
-                return IPAddress::all();
-                ;
-            });
+            // $results = Cache::remember('all_ip',300, function(){
+            //     return IPAddress::all();
+            //     ;
+            // });
+            $results = IPAddress::all();
             $mess = "success";
             $code = 200;
         }

@@ -117,9 +117,11 @@
                         <!-- Status   -->
                         <td>
                           @if($item->isChecking == 1)
-                          <button class="btn bg-success">First</button>
+                          <button class="btn bg-warning" disabled>First</button>
+                          <img style="width: 2em; border-radius:50%" src="dist/img/isLoading.gif" alt=""></td>
                           @else
-                          <button class="btn bg-success">Second</button>
+                          <button class="btn bg-warning" disabled>Second</button>
+                          <img style="width: 2em; border-radius:50%" src="dist/img/isLoading.gif" alt=""></td>
                           @endif
                         </td>
 
