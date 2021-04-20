@@ -29,14 +29,10 @@ II.  **Các service cần thiết**
 
 1. Redis:
     Cài đặt và cấu hình theo docs: https://laravel.com/docs/7.x/cache
-2. Cronjob:
-    Trong thư mục root của ứng dụng:
-    - Chạy crontab -e để tạo cronjob
-    - Thêm nội dung:
-    "5 * * * * cd /your-project-path && php artisan cronip:update >> /dev/null 2>&1"
-3.  Supervisor:
+
+2.  Supervisor:
     Cài đặt và cấu hình theo docs: https://laravel.com/docs/7.x/cache
-4. Khởi chạy ứng dụng:
+3. Khởi chạy ứng dụng:
     4.1 composer install
     4.2 php artisan migrate --seed
     4.3 Cấp quyền execute "chmod +x /yourfiles.sh"
@@ -44,13 +40,6 @@ II.  **Các service cần thiết**
     
     *File cấu hình supervisor trong folder supervisor
 
-
-----
-Update 31/03/2021
-1. Thiết kế giao diện show kết quả, upload và supervisor
-2. Có thể chỉnh sửa supervisor config
-3. Thêm cronjob cho double check 
-"5 * * * * cd /your-project-path && php artisan cronip:update >> /dev/null 2>&1"
 
 -----
 Update 08/04/2021

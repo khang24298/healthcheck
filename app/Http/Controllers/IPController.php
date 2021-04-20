@@ -237,9 +237,7 @@ class IPController extends Controller
             $mess = $e->getMessage();
             $code = 500;
         }
-        return response()->json([
-            'message' => $mess,
-            'data' => $ip
-        ],$code);
+        $results = IPAddress::all();
+        return view('home',['data'=>$results]);
     }
 }
